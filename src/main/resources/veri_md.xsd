@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--- 
+	Descripción: Lista de Perfiles y Tarifas de Título para venta (carga/recarga) (TLP) (TLV=B4h; Version=5.4)
+	Fecha:       25/11/2016
+	Revisión:    28/11/2016
+	Revisión:    19/03/2019
+	Revisión:    24/10/2019
+	
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<xs:annotation>
+		<xs:documentation xml:lang="es">Esquema que define Lista de Perfiles y Tarifas de Título para venta (carga/recarga) (TLP) (TLV=B4h; Version=5.4)</xs:documentation>
+	</xs:annotation>
+
+	<xs:element name="Informacion_Tarifas_Titulos">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Tipo_Tarjeta" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="TipoTLV" use="required">
+				<xs:simpleType>
+					<xs:annotation>
+						<xs:documentation xml:lang="es">Esta TLV debe tener siempre uno de los valores especificados en la restricción</xs:documentation>
+					</xs:annotation>
+					<xs:restriction base="xs:string">
+						<xs:pattern value="B4|B4h"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+
+			<xs:attribute name="VersionTLV" use="required">
+				<xs:simpleType>
+					<xs:annotation>
+						<xs:documentation xml:lang="es">Es la versión de este formato de datos. Para esta versión siempre es 5.0</xs:documentation>
+					</xs:annotation>
+					<xs:restriction base="versionXpuntoY">
+						<xs:pattern value="5.4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="VersionContenido" use="required">
+				<xs:simpleType>
+					<xs:annotation>
+						<xs:documentation xml:lang="es">Versión de contenido del XML. Se incrementa en cada generación diferente del fichero, es decir, cuando existe un contenido nuevo. El versionado
+							del contenido es por actor.</xs:documentation>
+					</xs:annotation>
+					<xs:restriction base="versionXpuntoY"/>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="fecha" type="xs:dateTime" use="required"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="Tipo_Tarjeta">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Familia" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="Codigo" use="required">
+				<xs:simpleType>
+					<xs:restriction base="hex1byteConNotacion">
+						<xs:enumeration value="00h"/>
+						<xs:enumeration value="01h"/>
+						<xs:enumeration value="02h"/>
+						<xs:enumeration value="03h"/>
+						<xs:enumeration value="04h"/>
+						<xs:enumeration value="05h"/>
+						<xs:enumeration value="07h"/>
+						<xs:enumeration value="F1h"/>
+						<xs:enumeration value="F2h"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="Descripcion" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="Familia">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Titulo" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="idfamilia" type="xs:string" use="required"/>
+			<xs:attribute name="TipoTitulo" type="xs:string" use="required"/>
+			<xs:attribute name="Orden" type="xs:integer" use="required"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="Titulo">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Empresa_Propietaria_Cod" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="Fecha_Inicio_Venta" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="Fecha_Cambio_Venta1" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="Fecha_Cambio_Venta2" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="Fecha_Fin_Venta" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="Colectivo" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="Codigo" type="hex2byteConNotacion" use="required"/>
+			<xs:attribute name="Descripcion" type="xs:string" use="required"/>
+			<xs:attribute name="Orden" type="xs:integer" use="required"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="Colectivo">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Perfil" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="Codigo" type="hex1byteConNotacion" use="required"/>
+			<xs:attribute name="Descripcion" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="Perfil">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Perfil_Nombre" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="Empresa_Propietaria_Perfil" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="Tarifa_Venta_1" type="tTarifa_Venta" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="Tarifa_Venta_2" type="tTarifa_Venta" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="Tarifa_Venta_3" type="tTarifa_Venta" minOccurs="1" maxOccurs="1"/>
+			</xs:sequence>
+			<xs:attribute name="Codigo" type="hex1byteConNotacion" use="required"/>
+		</xs:complexType>
+	</xs:element>
+
+
+	<!-- DEFINICIÓN DE TIPOS BIT COMUNES   /////////////////////////////////////////////////////////////////////////// -->
+	<!-- Tipo XML-BIT: versionXpuntoY -->
+	<xs:simpleType name="versionXpuntoY">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])[.]([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- Tipo XML-BIT: hex1byteConNotacion -->
+	<xs:simpleType name="hex1byteConNotacion">
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+			<xs:pattern value="[A-Fa-f0-9]{2}h"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- Tipo XML-BIT: hex2byteConNotacion -->
+	<xs:simpleType name="hex2byteConNotacion">
+		<xs:restriction base="xs:string">
+			<xs:length value="5"/>
+			<xs:pattern value="[A-Fa-f0-9]{4}h"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- Tipo XML-BIT: hex3byteConNotacion -->
+	<xs:simpleType name="hex3byteConNotacion">
+		<xs:restriction base="xs:string">
+			<xs:length value="7"/>
+			<xs:pattern value="[A-Fa-f0-9]{6}h"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- Tipo XML-BIT: hex4byteConNotacion -->
+	<xs:simpleType name="hex4byteConNotacion">
+		<xs:restriction base="xs:string">
+			<xs:length value="9"/>
+			<xs:pattern value="[A-Fa-f0-9]{8}h"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Tipo XML-BIT: xEntero20bitsType -->
+	<xs:simpleType name="xEntero20bitsType">
+		<xs:restriction base="xs:int">
+			<xs:minInclusive value="0"/>
+			<xs:maxInclusive value="1048575"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!--  Tipo XML-BIT: tTarifa_Venta -->
+	<xs:complexType name="tTarifa_Venta">
+		<xs:sequence>
+			<xs:element ref="Porcentaje_IVA" minOccurs="1" maxOccurs="1" />
+			
+			<xs:element name="Tipo_BaseImponible" type="hex1byteConNotacion" minOccurs="1" maxOccurs="1" fixed="02h">
+				<xs:annotation>
+					<xs:documentation> Sólo admite el "02h"="Céntimos de euro"</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BaseImponible" type="xEntero20bitsType" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Según las Especificaciones BIT, la cantidad de un "DUnit" debe ser un entero positivo que quepa en 20 bits</xs:documentation>
+				</xs:annotation>
+			</xs:element>			
+
+			<xs:element name="Tipo_UnidadIVA" type="hex1byteConNotacion" minOccurs="1" maxOccurs="1" fixed="02h">
+				<xs:annotation>
+					<xs:documentation> Sólo admite el "02h"="Céntimos de euro"</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ImporteIVA" type="xEntero20bitsType" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Según las Especificaciones BIT, la cantidad de un "DUnit" debe ser un entero positivo que quepa en 20 bits</xs:documentation>
+				</xs:annotation>
+			</xs:element>			
+			
+			<xs:element name="Tipo_Unidades" type="hex1byteConNotacion" minOccurs="1" maxOccurs="1" fixed="02h">
+				<xs:annotation>
+					<xs:documentation> La tarifa de venta sólo admite el "02h"="Céntimos de euro"</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Unidades" type="xEntero20bitsType" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Según las Especificaciones BIT, la cantidad de un "DUnit" debe ser un entero positivo que quepa en 20 bits</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="crc" minOccurs="1" maxOccurs="1" fixed="1">
+				<xs:annotation>
+					<xs:documentation> El resultado CRC sólo admite el 1 (correcto), el 2 (error) será rechazado</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- DEFINICIÓN DE ELEMENTOS BÁSICOS ///////////////////////////////////////////////////////////////////// -->
+	<xs:element name="Empresa_Propietaria_Cod" type="hex1byteConNotacion"/>
+	<xs:element name="Empresa_Propietaria_Perfil" type="hex1byteConNotacion"/>
+	<xs:element name="Fecha_Cambio_Venta1" type="xs:date"/>
+	<xs:element name="Fecha_Cambio_Venta2" type="xs:date"/>
+	<xs:element name="Fecha_Fin_Venta" type="xs:date"/>
+	<xs:element name="Fecha_Inicio_Venta" type="xs:date"/>
+	<xs:element name="Perfil_Nombre" type="xs:string"/>
+	<xs:element name="Porcentaje_IVA" type="xs:integer"/>
+
+</xs:schema>
